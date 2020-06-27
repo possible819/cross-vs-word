@@ -1,0 +1,38 @@
+{
+  "name": "cross-vs-word",
+  "version": "0.0.1",
+  "description": "Let's play Cross Word quiz with your friends",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "build": "npm run clean && webpack",
+    "serve": "npm run clean && npm run build && webpack-dev-server --config webpack.config.dev.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/possible819/cross-vs-word.git"
+  },
+  "author": "Jay Lee <jaylee.possible@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/possible819/cross-vs-word/issues"
+  },
+  "homepage": "https://github.com/possible819/cross-vs-word#readme",
+  "devDependencies": {
+    "@types/bootstrap": "^4.5.0",
+    "@types/jquery": "^3.5.0",
+    "css-loader": "^3.6.0",
+    "html-webpack-plugin": "^4.3.0",
+    "style-loader": "^1.2.1",
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.9.5",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "@material/mwc-icon": "^0.15.0",
+    "bootstrap": "^4.5.0",
+    "jquery": "^3.5.1"
+  }
+}

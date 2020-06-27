@@ -1,0 +1,23 @@
+aside {
+  position: absolute;
+  top: 0;
+  left: -100vw;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  transition: 0.3s;
+}
+
+aside.opened {
+  left: 0;
+  transition: 0.3s;
+}
+
+aside > div#menu {
+  background-color: #ad3b3b;
+  flex: 2;
+}
+
+aside > div#modal {
+  flex: 1;
+}
