@@ -1,5 +1,8 @@
 html,
 body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   margin: 0px;
   height: 100vh;
   color: #fff;
@@ -19,6 +22,11 @@ main {
 
 canvas {
   margin: 10px;
-  flex: 1;
-  background-color: #fff;
+  /* flex: 1; */
+  background-color: #eeeded;
+}
+
+footer {
+  height: 10vh;
+  padding: 0px 10px 10px 10px;
 }
