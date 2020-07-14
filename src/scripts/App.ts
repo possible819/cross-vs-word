@@ -1,21 +1,50 @@
 import "bootstrap/dist/css/bootstrap.min.css"
 import $ from "jquery"
+import Swal, { SweetAlertOptions, SweetAlertResult } from "sweetalert2"
 import "../assets/styles/common-styles.css"
 import "../assets/styles/theme.css"
-
 import { Canvas } from "./Canvas"
-import { MENUS } from "./constants"
-import { ControlPannel, ButtonTypes } from "./ControlPannel"
-import { Drawer } from "./Drawer"
+import { ButtonTypes, ControlPannel } from "./ControlPannel"
+import { Drawer, MenuInterface } from "./Drawer"
 import { Header } from "./Header"
-
-import Swal, { SweetAlertOptions, SweetAlertResult } from "sweetalert2"
 
 export class App {
   private readonly header: Header
   private readonly drawer: Drawer
   private readonly controlPannel: ControlPannel
   private readonly canvas: Canvas
+
+  private readonly menus: MenuInterface[] = [
+    {
+      title: "My Games",
+      menus: [
+        {
+          title: "New Game",
+          action: () => console.log("Move to page for creating new game"),
+        },
+        { title: "Demo 1", action: () => console.log("Load Demo 1") },
+        { title: "Demo 2", action: () => console.log("Load Demo 2") },
+        { title: "Demo 3", action: () => console.log("Load Demo 3") },
+      ],
+    },
+    {
+      title: "Play Games",
+      menus: [
+        {
+          title: "Saved Game 1",
+          action: () => console.log("Play Saved Game 1"),
+        },
+        {
+          title: "Saved Game 2",
+          action: () => console.log("Play Saved Game 2"),
+        },
+        {
+          title: "Saved Game 3",
+          action: () => console.log("Play Saved Game 3"),
+        },
+      ],
+    },
+  ]
 
   public size: number = 2
 
@@ -24,48 +53,11 @@ export class App {
     this.drawer = new Drawer(this)
     this.controlPannel = new ControlPannel(this)
     this.canvas = new Canvas(this)
-    this.drawer.setMenus(MENUS, this.menuSelectHandler.bind(this))
+    this.drawer.setMenus(this.menus)
   }
 
   drawerBtnClickHandler(): void {
     this.drawer.toggleDrawer()
-  }
-
-  menuSelectHandler(e: JQueryEventObject): void {
-    this.canvas.doAction($(e.currentTarget).prop("action"))
-    this.drawer.closeDrawer()
-    this.controlPannel.setButtons([
-      {
-        text: "Size",
-        type: ButtonTypes.neutral,
-        action: this.showSizeSetting.bind(this),
-      },
-      {
-        text: "Save",
-        type: ButtonTypes.positive,
-        action: () => console.log("save current quiz"),
-      },
-      {
-        text: "Reset",
-        type: ButtonTypes.negative,
-        action: () => console.log("reset current creating page"),
-      },
-    ])
-  }
-
-  private async showSizeSetting(): Promise<void> {
-    const option: SweetAlertOptions = {
-      title: "Size?",
-      input: "range",
-      inputAttributes: { min: "2", max: "10", step: "0" },
-      inputValue: "2",
-      confirmButtonText: "Confirm",
-      showCancelButton: true,
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    }
-    const result: SweetAlertResult<number> = await Swal.fire(option)
-    if (result.value !== undefined) this.size = result.value
   }
 }
 

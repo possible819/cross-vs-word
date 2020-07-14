@@ -1,17 +1,29 @@
 import $ from "jquery"
 import "../assets/styles/drawer.css"
 import { AbstractLifeCycle } from "./abstracts"
+import { App } from "./App"
 
 export interface MenuInterface {
   title: string
-  action: string
+  action?: () => void
+  menus?: MenuInterface[]
 }
-
 export class Drawer extends AbstractLifeCycle {
   private drawer!: JQuery<HTMLElement>
   private menu!: JQuery<HTMLElement>
   private modal!: JQuery<HTMLElement>
   private isOpened: boolean = false
+  private menus: MenuInterface[] = []
+  private backBtnTitle: string
+
+  /**
+   * @param {App} app
+   * @param {String} backBtnTitle 서브 메뉴에서 상위 메뉴로 이동하는 버튼의 타이틀
+   */
+  constructor(app: App, backBtnTitle?: string) {
+    super(app)
+    this.backBtnTitle = backBtnTitle || "Back"
+  }
 
   initializeMemberVariables(): void {
     this.drawer = $("aside")
@@ -28,17 +40,17 @@ export class Drawer extends AbstractLifeCycle {
     this.flipMenu()
   }
 
-  openDrawer(): void {
+  public openDrawer(): void {
     this.isOpened = true
     this.flipMenu()
   }
 
-  closeDrawer(): void {
+  public closeDrawer(): void {
     this.isOpened = false
     this.flipMenu()
   }
 
-  flipMenu() {
+  private flipMenu() {
     if (this.isOpened) {
       this.drawer.addClass("opened")
     } else {
@@ -46,40 +58,48 @@ export class Drawer extends AbstractLifeCycle {
     }
   }
 
-  public setMenus(
-    menus: MenuInterface[],
-    menuSelectHandler: (e: JQueryEventObject) => void
-  ): void {
+  public setMenus(menus: MenuInterface[], isSubMenu?: boolean): void {
+    if (!isSubMenu) this.menus = menus
     if (menus?.length) {
-      this.clearMenuCards()
+      this.clearMenus()
       for (const menu of menus) {
-        this.menu.append(this.menuCardFactory(menu, menuSelectHandler))
+        this.menu.append(this.menuCardFactory(menu))
       }
     }
   }
 
-  private menuCardFactory(
-    menu: MenuInterface,
-    menuSelectHandler: (e: JQueryEventObject) => void
-  ): JQuery<HTMLElement> {
-    return $("<div></div>")
-      .addClass("shadow card text-white bg-danger m-1 p-1")
-      .text(menu.title)
-      .prop("action", menu.action)
-      .on("click", menuSelectHandler)
-  }
-
-  private clearMenuCards() {
+  public clearMenus() {
     while (this.menu.children().length) {
       this.menu.children().remove()
     }
   }
 
-  protected menuSelectHandler(e: JQueryEventObject): void {
-    console.warn(
-      `Menu is selected, ${$(e.currentTarget).prop(
-        "action"
-      )}, You can customize it to do something else.`
-    )
+  private menuCardFactory(menu: MenuInterface): JQuery<HTMLElement> {
+    const menuCard: JQuery<HTMLElement> = $("<div></div>")
+      .addClass("shadow card bg-danger m-1 p-1")
+      .append($("<span></span>").addClass("text-white m-auto").text(menu.title))
+
+    if (menu.action) {
+      menuCard.on("click", menu.action)
+    }
+
+    if (menu.menus?.length) {
+      menuCard.on("click", () => {
+        this.setMenus(
+          [
+            {
+              title: this.backBtnTitle,
+              action: () => {
+                this.setMenus(this.menus)
+              },
+            },
+            ...(menu.menus as MenuInterface[]),
+          ],
+          true
+        )
+      })
+    }
+
+    return menuCard
   }
 }
