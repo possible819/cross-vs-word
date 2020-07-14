@@ -19,6 +19,13 @@
     "email": "jaylee.possible@gmail.com",
     "url": "https://dongchoon.code.blog"
   },
+  "contributors": [
+    {
+      "name": "Gincheong",
+      "email": "gincheong2@gmail.com",
+      "url": "https://gincheong.github.io"
+    }
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/possible819/cross-vs-word/issues"
