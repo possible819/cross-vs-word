@@ -14,7 +14,11 @@
     "type": "git",
     "url": "git+https://github.com/possible819/cross-vs-word.git"
   },
-  "author": "Jay Lee <jaylee.possible@gmail.com>",
+  "author": {
+    "name": "Jay Lee",
+    "email": "jaylee.possible@gmail.com",
+    "url": "https://dongchoon.code.blog"
+  },
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/possible819/cross-vs-word/issues"
