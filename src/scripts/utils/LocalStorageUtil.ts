@@ -3,6 +3,11 @@ const ERROR_MESSAGES: { [key: string]: string } = {
   VALUE_EXISTS: `Failed to write value because there's value which has same key. If you want to overwrite it you should pass overwrite flag`,
 } as const
 
+/**
+ * @description Local Storage Utility
+ * @method getItem
+ * @method setItem
+ */
 export const LocalStorageUtil = {
   /**
    * @description Return found value or default value if it's passed after parse it as JSON
