@@ -2,11 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import "../assets/styles/common-styles.css"
 import "../assets/styles/theme.css"
 import { Canvas } from "./Canvas"
-import {
-  ControlPannel,
-  ControlButtonInterface,
-  ButtonTypes,
-} from "./ControlPannel"
+import { ButtonTypes, ControlPannel } from "./ControlPannel"
 import { Drawer, MenuInterface } from "./Drawer"
 import { Header } from "./Header"
 import { LocalStorageUtil } from "./utils"
