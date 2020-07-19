@@ -1,1 +1,1 @@
-export * from "./LifeCycleInterface";
+export * from "./LifeCycleInterface"
