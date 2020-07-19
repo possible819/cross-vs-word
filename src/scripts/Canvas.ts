@@ -1,16 +1,29 @@
-import { AbstractLifeCycle } from "./abstracts"
 import $ from "jquery"
+import { AbstractLifeCycle } from "./abstracts"
+import { BlockColors, BlockTypes } from "./enums"
+
+type BlockMapType = {
+  xFrom: number
+  xTo: number
+  yFrom: number
+  yTo: number
+  type: BlockTypes
+}
 
 export class Canvas extends AbstractLifeCycle {
   private canvas!: JQuery<HTMLCanvasElement>
-  public context: CanvasRenderingContext2D | undefined
-
-  private ACTION_MAP: { [key: string]: () => any } = {
-    new: this.createAction,
-  }
+  private canvasSize!: number
+  public context!: CanvasRenderingContext2D
+  private blockMap: BlockMapType[] = []
 
   initializeMemberVariables(): void {
     this.canvas = $("canvas")
+    this.canvasSize =
+      window.innerWidth < window.innerHeight
+        ? window.innerWidth - 20
+        : window.innerHeight - 20
+
+    this.canvas.prop("width", this.canvasSize).prop("height", this.canvasSize)
     this.context = this.canvas
       .get(0)
       .getContext("2d") as CanvasRenderingContext2D
@@ -18,46 +31,82 @@ export class Canvas extends AbstractLifeCycle {
 
   registerEventListeners(): void {}
 
-  doAction(action: string): void {
-    if (
-      this.ACTION_MAP[action] &&
-      typeof this.ACTION_MAP[action] === "function"
-    )
-      this.ACTION_MAP[action].call(this)
-  }
+  renderCreateGame(size: number = 5): void {
+    this.clearBlockMap()
+    const cellSize: number = this.canvas.prop("width") / size
 
-  createAction(): void {
-    this.renderBoard()
-  }
+    for (let col: number = 0; col < size; col++) {
+      const x: number = col * cellSize
 
-  renderBoard(): void {
-    const canvasWidth: number = this.canvas.width() as number
-    const canvasHeight: number = this.canvas.height() as number
+      for (let row: number = 0; row < size; row++) {
+        const y: number = row * cellSize
 
-    const smallerLength: number =
-      canvasWidth < canvasHeight ? canvasWidth : canvasHeight
+        this.context.fillStyle = BlockColors.ObstacleFill
+        this.context.strokeStyle = BlockColors.ObstacleStroke
+        this.context.fillRect(x, y, cellSize, cellSize)
+        this.context.strokeRect(x, y, cellSize, cellSize)
 
-    const unitWidth: number = smallerLength / this.app.size
-
-    // 10
-    // 2
-    // 5
-
-    // 0, 0, 5, 5
-    // 5, 0, 5, 5
-    // 0, 5, 5, 5
-    // 5, 5, 5, 5
-
-    for (let i: number = 0; i < this.app.size; i++) {
-      const y: number = i * unitWidth
-      // Row 별로 그리기
-      for (let j: number = 0; j < this.app.size; j++) {
-        const x: number = j * unitWidth
-        this.context?.strokeRect(x, y, unitWidth, unitWidth)
+        this.blockMap.push({
+          xFrom: x,
+          xTo: x + cellSize,
+          yFrom: y,
+          yTo: y + cellSize,
+          type: BlockTypes.Obstacle,
+        })
       }
     }
 
-    // console.log(canvasWidth, canvasHeight)
-    // this.app.size
+    this.canvas.unbind("click")
+    this.canvas.on("click", this.switchBlockByClick.bind(this))
+  }
+
+  switchBlockByClick(e: JQuery.MouseEventBase): void {
+    const offsetX: number = e.offsetX
+    const offsetY: number = e.offsetY
+
+    const clickedBlockMap: BlockMapType = this.blockMap.find(
+      (bm: BlockMapType) =>
+        offsetX > bm.xFrom &&
+        offsetX < bm.xTo &&
+        offsetY > bm.yFrom &&
+        offsetY < bm.yTo
+    ) as BlockMapType
+
+    clickedBlockMap.type =
+      clickedBlockMap.type === BlockTypes.Obstacle
+        ? BlockTypes.Input
+        : BlockTypes.Obstacle
+    this.renderBlock(clickedBlockMap)
+  }
+
+  renderBlock(block: BlockMapType) {
+    switch (block.type) {
+      case BlockTypes.Obstacle:
+        this.context.fillStyle = BlockColors.ObstacleFill
+        this.context.strokeStyle = BlockColors.ObstacleStroke
+        break
+
+      case BlockTypes.Input:
+        this.context.fillStyle = BlockColors.InputFill
+        this.context.strokeStyle = BlockColors.InputStroke
+        break
+    }
+
+    this.context.fillRect(
+      block.xFrom,
+      block.yFrom,
+      block.xTo - block.xFrom,
+      block.yTo - block.yFrom
+    )
+    this.context.strokeRect(
+      block.xFrom,
+      block.yFrom,
+      block.xTo - block.xFrom,
+      block.yTo - block.yFrom
+    )
+  }
+
+  clearBlockMap(): void {
+    this.blockMap = []
   }
 }
