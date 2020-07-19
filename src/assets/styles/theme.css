@@ -22,8 +22,8 @@ main {
 
 canvas {
   margin: 10px;
-  /* flex: 1; */
-  background-color: #eeeded;
+  flex: 1;
+  background-color: transparent;
 }
 
 footer {
