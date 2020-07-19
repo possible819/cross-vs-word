@@ -19,11 +19,9 @@ main {
   flex-direction: column;
   background-color: #db6565;
 }
-
-main > div#canvas-container {
+div#canvas-container {
   flex: 1;
 }
-
 canvas {
   margin: 10px;
   background-color: transparent;
