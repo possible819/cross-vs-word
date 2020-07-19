@@ -2,7 +2,11 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import "../assets/styles/common-styles.css"
 import "../assets/styles/theme.css"
 import { Canvas } from "./Canvas"
-import { ControlPannel } from "./ControlPannel"
+import {
+  ControlPannel,
+  ControlButtonInterface,
+  ButtonTypes,
+} from "./ControlPannel"
 import { Drawer, MenuInterface } from "./Drawer"
 import { Header } from "./Header"
 import { LocalStorageUtil } from "./utils"
@@ -19,7 +23,7 @@ export class App {
       menus: [
         {
           title: "New Game",
-          action: () => console.log("Move to page for creating new game"),
+          action: () => this.showCreateGame(),
         },
         ...LocalStorageUtil.getItem("my_games", [
           { title: "Demo 1", action: () => console.log("Load Demo 1") },
@@ -58,6 +62,23 @@ export class App {
 
   drawerBtnClickHandler(): void {
     this.drawer.toggleDrawer()
+  }
+
+  showCreateGame(size: number = 5): void {
+    this.drawer.closeDrawer()
+    this.canvas.renderCreateGame(size)
+    this.controlPannel.setButtons([
+      {
+        text: "Up",
+        type: ButtonTypes.neutral,
+        action: () => this.showCreateGame(size + 1),
+      },
+      {
+        text: "Down",
+        type: ButtonTypes.neutral,
+        action: () => this.showCreateGame(size - 1),
+      },
+    ])
   }
 }
 

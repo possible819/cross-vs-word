@@ -20,9 +20,12 @@ main {
   background-color: #db6565;
 }
 
+main > div#canvas-container {
+  flex: 1;
+}
+
 canvas {
   margin: 10px;
-  flex: 1;
   background-color: transparent;
 }
 
