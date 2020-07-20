@@ -1,7 +1,7 @@
 const fs = require("fs")
-const filePath = "./dist"
+const DISTRIBUTE_PATH = "./dist"
 
-fs.rmdir(filePath, { recursive: true }, (err) => {
+fs.rmdir(DISTRIBUTE_PATH, { recursive: true }, (err) => {
   if (err) {
     throw err
   }
