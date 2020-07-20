@@ -4,7 +4,7 @@
   "description": "Let's play Cross Word quiz with your friends",
   "main": "index.js",
   "scripts": {
-    "clean": "rm -rf ./dist",
+    "clean": "node ./npm-scripts/clean.js",
     "build": "webpack",
     "build:dev": "webpack --config webpack.config.dev.js",
     "serve": "npm run clean && npm run build && webpack-dev-server",
