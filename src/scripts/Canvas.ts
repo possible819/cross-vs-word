@@ -2,7 +2,9 @@ import $ from "jquery"
 import { AbstractLifeCycle } from "./abstracts"
 import { BlockColors, BlockTypes } from "./enums"
 
-type BlockMapType = {
+export type Block = {
+  row: number
+  column: number
   xFrom: number
   xTo: number
   yFrom: number
@@ -14,7 +16,7 @@ export class Canvas extends AbstractLifeCycle {
   private canvas!: JQuery<HTMLCanvasElement>
   private canvasSize!: number
   public context!: CanvasRenderingContext2D
-  private blockMap: BlockMapType[] = []
+  public blocks: Block[] = []
 
   initializeMemberVariables(): void {
     this.canvas = $("canvas")
@@ -31,22 +33,18 @@ export class Canvas extends AbstractLifeCycle {
 
   registerEventListeners(): void {}
 
-  renderCreateGame(size: number = 5): void {
-    this.clearBlockMap()
+  generateEmptyBlocks(size: number = 5): Block[] {
     const cellSize: number = this.canvas.prop("width") / size
 
-    for (let col: number = 0; col < size; col++) {
-      const x: number = col * cellSize
+    this.clearBlocks()
+    for (let column: number = 0; column < size; column++) {
+      const x: number = column * cellSize
 
       for (let row: number = 0; row < size; row++) {
         const y: number = row * cellSize
-
-        this.context.fillStyle = BlockColors.ObstacleFill
-        this.context.strokeStyle = BlockColors.ObstacleStroke
-        this.context.fillRect(x, y, cellSize, cellSize)
-        this.context.strokeRect(x, y, cellSize, cellSize)
-
-        this.blockMap.push({
+        this.blocks.push({
+          row,
+          column,
           xFrom: x,
           xTo: x + cellSize,
           yFrom: y,
@@ -56,30 +54,45 @@ export class Canvas extends AbstractLifeCycle {
       }
     }
 
-    this.canvas.unbind("click")
-    this.canvas.on("click", this.switchBlockByClick.bind(this))
+    return this.blocks
   }
 
-  switchBlockByClick(e: JQuery.MouseEventBase): void {
+  switchBlockByClick(e: JQuery.MouseEventBase, types: BlockTypes[]): void {
     const offsetX: number = e.offsetX
     const offsetY: number = e.offsetY
 
-    const clickedBlockMap: BlockMapType = this.blockMap.find(
-      (bm: BlockMapType) =>
-        offsetX > bm.xFrom &&
-        offsetX < bm.xTo &&
-        offsetY > bm.yFrom &&
-        offsetY < bm.yTo
-    ) as BlockMapType
+    const clickedBlock: Block = this.blocks.find(
+      (b: Block) =>
+        offsetX > b.xFrom &&
+        offsetX < b.xTo &&
+        offsetY > b.yFrom &&
+        offsetY < b.yTo
+    ) as Block
 
-    clickedBlockMap.type =
-      clickedBlockMap.type === BlockTypes.Obstacle
-        ? BlockTypes.Input
-        : BlockTypes.Obstacle
-    this.renderBlock(clickedBlockMap)
+    let currentIdx: number = types.indexOf(clickedBlock.type)
+    const nextIdx: number = (currentIdx + 1) % types.length
+    clickedBlock.type = types[nextIdx]
+    this.renderBlock(clickedBlock)
   }
 
-  renderBlock(block: BlockMapType) {
+  renderBlocks(
+    blocks: Block[],
+    eventHandlers?: { [event: string]: any } | undefined
+  ): void {
+    this.blocks = blocks
+    for (const block of this.blocks) {
+      this.renderBlock(block)
+    }
+
+    if (eventHandlers) {
+      for (const event in eventHandlers) {
+        this.canvas.unbind(event)
+        this.canvas.on(event, eventHandlers[event])
+      }
+    }
+  }
+
+  renderBlock(block: Block): void {
     switch (block.type) {
       case BlockTypes.Obstacle:
         this.context.fillStyle = BlockColors.ObstacleFill
@@ -106,7 +119,7 @@ export class Canvas extends AbstractLifeCycle {
     )
   }
 
-  clearBlockMap(): void {
-    this.blockMap = []
+  clearBlocks(): void {
+    this.blocks = []
   }
 }

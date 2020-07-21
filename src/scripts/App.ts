@@ -2,6 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import "../assets/styles/common-styles.css"
 import "../assets/styles/theme.css"
 import { Canvas } from "./Canvas"
+import { CreateGameController } from "./controllers"
 import { ButtonTypes, ControlPannel } from "./ControlPannel"
 import { Drawer, MenuInterface } from "./Drawer"
 import { Header } from "./Header"
@@ -12,6 +13,7 @@ export class App {
   private readonly drawer: Drawer
   private readonly controlPannel: ControlPannel
   private readonly canvas: Canvas
+  private readonly createGameController: CreateGameController
 
   private readonly menus: MenuInterface[] = [
     {
@@ -46,13 +48,12 @@ export class App {
     },
   ]
 
-  public size: number = 2
-
   constructor() {
     this.header = new Header(this)
     this.drawer = new Drawer(this)
     this.controlPannel = new ControlPannel(this)
     this.canvas = new Canvas(this)
+    this.createGameController = new CreateGameController(this.canvas)
     this.drawer.setMenus(this.menus)
   }
 
@@ -60,19 +61,24 @@ export class App {
     this.drawer.toggleDrawer()
   }
 
-  showCreateGame(size: number = 5): void {
+  showCreateGame(): void {
     this.drawer.closeDrawer()
-    this.canvas.renderCreateGame(size)
+    this.createGameController.renderCanvas()
     this.controlPannel.setButtons([
       {
         text: "Up",
         type: ButtonTypes.neutral,
-        action: () => this.showCreateGame(size + 1),
+        action: () => this.createGameController.sizeUp(),
       },
       {
         text: "Down",
         type: ButtonTypes.neutral,
-        action: () => this.showCreateGame(size - 1),
+        action: () => this.createGameController.sizeDown(),
+      },
+      {
+        text: "Reset",
+        type: ButtonTypes.negative,
+        action: () => this.createGameController.reset(),
       },
     ])
   }
