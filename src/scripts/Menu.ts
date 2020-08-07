@@ -19,11 +19,9 @@ export class MenuNode {
 
 export class MenuTree {
   private root: MenuNode
-  private currentNode: MenuNode
 
   constructor() {
     this.root = new MenuNode("")
-    this.currentNode = this.root
   }
 
   public insert(targetNode: MenuNode, title: string, action?: () => void) {
@@ -38,7 +36,7 @@ export class MenuTree {
     return newNode
   }
 
-  public getCurrentNode() {
-    return this.currentNode
+  public getRootNode() {
+    return this.root
   }
 }

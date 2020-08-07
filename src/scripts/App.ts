@@ -29,11 +29,11 @@ export class App {
 
     this.menu = new MenuTree()
     this.initMenuTree()
-    this.drawer.setMenus(this.menu.getCurrentNode())
+    this.drawer.setMenus(this.menu.getRootNode())
   }
 
   initMenuTree(): void {
-    const root = this.menu.getCurrentNode()
+    const root = this.menu.getRootNode()
 
     // My Games
     const myGames = this.menu.insert(root, "My Games")
@@ -46,11 +46,11 @@ export class App {
 
     // Play Games
     const playGames = this.menu.insert(root, "Play Games")
-    this.menu.insert(myGames, "Demo 1", () => console.log("Load Demo 1"))
-    this.menu.insert(myGames, "Demo 2", () => console.log("Load Demo 2"))
-    this.menu.insert(myGames, "Demo 3", () => console.log("Load Demo 3"))
-    this.menu.insert(myGames, "Demo 4", () => console.log("Load Demo 4"))
-    this.menu.insert(myGames, "Demo 5", () => console.log("Load Demo 5"))
+    this.menu.insert(playGames, "Demo 1", () => console.log("Load Demo 1"))
+    this.menu.insert(playGames, "Demo 2", () => console.log("Load Demo 2"))
+    this.menu.insert(playGames, "Demo 3", () => console.log("Load Demo 3"))
+    this.menu.insert(playGames, "Demo 4", () => console.log("Load Demo 4"))
+    this.menu.insert(playGames, "Demo 5", () => console.log("Load Demo 5"))
 
     // Setting
     const setting = this.menu.insert(root, "Setting")
