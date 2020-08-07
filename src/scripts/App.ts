@@ -10,45 +10,14 @@ import {
 import { Drawer, MenuInterface } from "./Drawer"
 import { Header } from "./Header"
 import { LocalStorageUtil } from "./utils"
+import { MenuTree } from "./Menu"
 
 export class App {
   private readonly header: Header
   private readonly drawer: Drawer
   private readonly controlPannel: ControlPannel
   private readonly canvas: Canvas
-
-  private readonly menus: MenuInterface[] = [
-    {
-      title: "My Games",
-      menus: [
-        {
-          title: "New Game",
-          action: () => this.showCreateGame(),
-        },
-        ...LocalStorageUtil.getItem("my_games", [
-          { title: "Demo 1", action: () => console.log("Load Demo 1") },
-          { title: "Demo 2", action: () => console.log("Load Demo 2") },
-          { title: "Demo 3", action: () => console.log("Load Demo 3") },
-          { title: "Demo 4", action: () => console.log("Load Demo 4") },
-          { title: "Demo 5", action: () => console.log("Load Demo 5") },
-        ]),
-      ],
-    },
-    {
-      title: "Play Games",
-      menus: LocalStorageUtil.getItem("my_games", [
-        { title: "Demo 1", action: () => console.log("Load Demo 1") },
-        { title: "Demo 2", action: () => console.log("Load Demo 2") },
-        { title: "Demo 3", action: () => console.log("Load Demo 3") },
-        { title: "Demo 4", action: () => console.log("Load Demo 4") },
-        { title: "Demo 5", action: () => console.log("Load Demo 5") },
-      ]),
-    },
-    {
-      title: "Setting",
-      action: () => console.log("Show setting page"),
-    },
-  ]
+  private readonly menu: MenuTree
 
   public size: number = 2
 
@@ -57,7 +26,45 @@ export class App {
     this.drawer = new Drawer(this)
     this.controlPannel = new ControlPannel(this)
     this.canvas = new Canvas(this)
-    this.drawer.setMenus(this.menus)
+
+    this.menu = new MenuTree()
+    this.initMenuTree()
+    this.drawer.setMenus(this.menu.getRootNode())
+  }
+
+  initMenuTree(): void {
+    const root = this.menu.getRootNode()
+
+    // My Games
+    const myGames = this.menu.insert(root, "My Games")
+    this.menu.insert(myGames, "New Game", () => this.showCreateGame())
+    this.menu.insert(myGames, "Demo 1", () => console.log("Load Demo 1"))
+    this.menu.insert(myGames, "Demo 2", () => console.log("Load Demo 2"))
+    this.menu.insert(myGames, "Demo 3", () => console.log("Load Demo 3"))
+    this.menu.insert(myGames, "Demo 4", () => console.log("Load Demo 4"))
+    this.menu.insert(myGames, "Demo 5", () => console.log("Load Demo 5"))
+
+    // Play Games
+    const playGames = this.menu.insert(root, "Play Games")
+    this.menu.insert(playGames, "Demo 1", () => console.log("Load Demo 1"))
+    this.menu.insert(playGames, "Demo 2", () => console.log("Load Demo 2"))
+    this.menu.insert(playGames, "Demo 3", () => console.log("Load Demo 3"))
+    this.menu.insert(playGames, "Demo 4", () => console.log("Load Demo 4"))
+    this.menu.insert(playGames, "Demo 5", () => console.log("Load Demo 5"))
+
+    // Setting
+    const setting = this.menu.insert(root, "Setting")
+
+    const sound = this.menu.insert(setting, "Sound", () =>
+      console.log("Sound Setting")
+    )
+    this.menu.insert(sound, "BGM", () => console.log("BGM Setting"))
+    this.menu.insert(sound, "SE", () => console.log("SE Setting"))
+
+    const game = this.menu.insert(setting, "Game", () =>
+      console.log("Game Setting")
+    )
+    this.menu.insert(game, "Language", () => console.log("Language Setting"))
   }
 
   drawerBtnClickHandler(): void {
