@@ -2,6 +2,7 @@ import $ from "jquery"
 import "../assets/styles/drawer.css"
 import { AbstractLifeCycle } from "./abstracts"
 import { App } from "./App"
+import { MenuNode } from "./Menu"
 
 export interface MenuInterface {
   title: string
@@ -13,7 +14,6 @@ export class Drawer extends AbstractLifeCycle {
   private menu!: JQuery<HTMLElement>
   private modal!: JQuery<HTMLElement>
   private isOpened: boolean = false
-  private menus: MenuInterface[] = []
   private backBtnTitle: string
 
   /**
@@ -58,12 +58,17 @@ export class Drawer extends AbstractLifeCycle {
     }
   }
 
-  public setMenus(menus: MenuInterface[], isSubMenu?: boolean): void {
-    if (!isSubMenu) this.menus = menus
-    if (menus?.length) {
+  public setMenus(currentNode: MenuNode) {
+    if (currentNode.children) {
       this.clearMenus()
-      for (const menu of menus) {
-        this.menu.append(this.menuCardFactory(menu))
+
+      if (currentNode.parent) {
+        // Back Btn
+        this.menu.append(this.menuCardFactory(currentNode.parent))
+      }
+
+      for (const child in currentNode.children) {
+        this.menu.append(this.menuCardFactory(currentNode.children[child]))
       }
     }
   }
@@ -74,7 +79,7 @@ export class Drawer extends AbstractLifeCycle {
     }
   }
 
-  private menuCardFactory(menu: MenuInterface): JQuery<HTMLElement> {
+  private menuCardFactory(menu: MenuNode): JQuery<HTMLElement> {
     const menuCard: JQuery<HTMLElement> = $("<div></div>")
       .addClass("shadow card bg-danger m-1 p-1")
       .append($("<span></span>").addClass("text-white m-auto").text(menu.title))
@@ -83,20 +88,9 @@ export class Drawer extends AbstractLifeCycle {
       menuCard.on("click", menu.action)
     }
 
-    if (menu.menus?.length) {
+    if (Object.keys(menu.children).length) {
       menuCard.on("click", () => {
-        this.setMenus(
-          [
-            {
-              title: this.backBtnTitle,
-              action: () => {
-                this.setMenus(this.menus)
-              },
-            },
-            ...(menu.menus as MenuInterface[]),
-          ],
-          true
-        )
+        this.setMenus(menu)
       })
     }
 
