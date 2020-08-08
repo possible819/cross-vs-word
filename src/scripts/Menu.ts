@@ -8,6 +8,8 @@ export class MenuNode {
   public parent?: MenuNode
   public children: Indexable
 
+  private backBtnTitle: string = "Back"
+
   constructor(title: string, action?: () => void, parent?: MenuNode) {
     this.title = title
     this.action = action
@@ -15,28 +17,16 @@ export class MenuNode {
 
     this.children = {}
   }
-}
 
-export class MenuTree {
-  private root: MenuNode
-
-  constructor() {
-    this.root = new MenuNode("")
-  }
-
-  public insert(targetNode: MenuNode, title: string, action?: () => void) {
+  public insert(title: string, action?: () => void) {
     const newNode = new MenuNode(title, action)
-    targetNode.children[title] = newNode
+    this.children[title] = newNode
 
-    const parentNode = Object.assign({}, targetNode) // shallow Copy
-    parentNode.title = "Back" // title 강제 변경하여 저장함
+    const parentNode = Object.assign({}, this)
+    parentNode.title = this.backBtnTitle
 
     newNode.parent = parentNode
 
     return newNode
-  }
-
-  public getRootNode() {
-    return this.root
   }
 }
